@@ -1,0 +1,36 @@
+{
+  "name": "lunr-js",
+  "version": "1.0.0",
+  "homepage": "https://github.com/marcus7777/lunr-js",
+  "authors": [
+    "Marcus Hitchins <marcus7777@gmail.com>"
+  ],
+  "description": "polymer rapper for \n# lunr.js \n## [Simple full-text search in your browser](https://github.com/olivernn/lunr.js)",
+  "keywords": [
+    "search",
+    "web-components",
+    "Polymer"
+  ],
+  "main": "lunr-js.html",
+  "license": "MIT",
+  "dependencies": {
+    "lunr.js": "olivernn/lunr.js#~0.5.11"
+  },
+  "devDependencies": {
+    "paper-styles": "PolymerElements/paper-styles#^1.0.4",
+    "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
+    "test-fixture": "polymerelements/test-fixture#^1.0.0",
+    "web-component-tester": "*",
+    "webcomponentsjs": "webcomponents/webcomponentsjs#^0.7.0"
+  },
+  "_release": "1.0.0",
+  "_resolution": {
+    "type": "version",
+    "tag": "v1.0.0",
+    "commit": "4c71c74165a72496346cb3bf1cf1ffc7b02f5614"
+  },
+  "_source": "https://github.com/marcus7777/lunr-js.git",
+  "_target": "^1.0.0",
+  "_originalSource": "lunr-js",
+  "_direct": true
+}

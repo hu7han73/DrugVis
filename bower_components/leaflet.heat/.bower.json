@@ -1,0 +1,27 @@
+{
+  "name": "leaflet.heat",
+  "homepage": "https://github.com/Leaflet/Leaflet.heat",
+  "authors": [
+    "Vladimir Agafonkin"
+  ],
+  "main": "./dist/leaflet-heat.js",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests",
+    "demo",
+    "package.json"
+  ],
+  "_release": "39164a6fbc",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "39164a6fbc78ab541adc27243d1a5957ceb4e0ff"
+  },
+  "_source": "https://github.com/johnthillaye/Leaflet.heat.git",
+  "_target": "*",
+  "_originalSource": "Leaflet.heat",
+  "_direct": true
+}

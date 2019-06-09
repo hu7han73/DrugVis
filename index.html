@@ -1,0 +1,1162 @@
+<!-- 
+  DrugVis
+  By: Han Hu (hh255@njit.edu; https://github.com/hu7han73)
+  License: BSD 
+-->
+
+<!-- @Date    : 2018-06-30 18:55:01
+@Author  : Chao Ma (cma1@kent.edu)
+@Website : http://vis.cs.kent.edu/NeighborVis/
+@Link    : https://github.com/AlexMa1989
+@Version : $Id$ -->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+</head>
+
+<body>
+    
+    <!-- navbar -->
+    <nav class="navbar navbar-default navbar-inverse navbar-fixed-top">
+        <div class="container-fluid">
+
+            <div class="row">
+
+                <div class="navbar-header side1">
+
+
+                    <span class="navbar-brand">
+                        <font color="#fff"><strong><span class="fas fa-pills" aria-hidden="true"></span>&nbsp;&nbsp;DRUG VIS &nbsp;v0.1
+                            </strong>
+                        </font>
+
+                        <button id='helpButton' class='btn btn-sm btn-primary' title='update' data-toggle="modal"> <span class='glyphicon glyphicon-question-sign'></span></button>
+                    </span>
+
+                </div>
+
+
+
+                <div id="collGroup" class="scrollmenu multiselect side2">
+
+                </div>
+
+                <div class="side4">
+
+                    <div id="dataManagement" class="btn-group">
+                        <button type="button" class="btn btn-sm btn-default dropdown-toggle navbar-top manageData" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Data Manager &nbsp;
+                            <span class='glyphicon glyphicon-chevron-down'></span>
+                        </button>
+
+                        <div class="dropdown-menu">
+
+                            <div id="dataManage">
+
+                                <table id='dataTable' class='table table-condensed table-hover class_selector'>
+                                    <thead>
+                                        <tr>
+                                            <th>SourceName</th>
+                                            <th>Show</th>
+                                            <th>Hide</th>
+                                            <th>Delete</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody> </tbody>
+                                </table>
+                            </div>
+
+                            <div id="manageUpload">
+                                <button type="button" id="uploadFile" class="btn btn-sm btn-default navbar-top upload" data-toggle="modal" data-target="#fileModal" data-backdrop="static" data-keyboard="false"><span class="glyphicon glyphicon-folder-open"></span> Data Upload</button>
+
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="username">
+                    <span id="userShow"></span>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <!-- End of navbar -->
+
+    <!-- Delete data modal -->
+    <div id="modalAsk" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Alert</h4>
+                </div>
+                <div class="modal-body">
+                    <p>Do you really want to delete this data in database ?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button id="modalDelete" type="button" class="btn btn-primary" data-dismiss="modal">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End of delete data modal -->
+
+    <!-- Upload modal -->
+    <div class="modal fade" id="fileModal" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static">
+        <div class="modal-dialog modal-lg">
+
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <!--<button type="button" class="close" data-dismiss="modal">&times;</button>-->
+                    <h4 class='modal-title'>Data Uploading</h4>
+                </div>
+
+                <!-- Error message -->
+                <!-- Show error message -->
+                <div id="trajmodel-error" class="alert alert-danger" role="alert">
+                    <span class="glyphicon glyphicon-exclamation-sign"></span>
+                    <label id="error-message"> Error : Default message </label>
+                </div>
+
+                <!-- nav tabs hidden -->
+                <ul class="nav nav-tabs hidden">
+
+
+                    <!-- database name -->
+                    <li class="active"><a id="dbname-tab" href="#dbname-modal" data-toggle="tab"> Data name </a></li>
+
+                    <!-- upload file -->
+                    <li><a id="first-tab" href="#upload-modal" data-toggle="tab">Upload File</a></li>
+
+                    <!-- survey questions -->
+                    <!-- Question 1 -->
+                    <li><a id="tripid-tab" href="#survey-modal" data-toggle="tab"> Select ID </a></li>
+                    <!-- Question 2 -->
+                    <li><a id="time-tab" href="#survey-modal" data-toggle="tab"> Select Time </a></li>
+                    <!-- Question 3 -->
+                    <li><a id="latitude-tab" href="#survey-modal" data-toggle="tab"> Select Latitude </a></li>
+                    <!-- Question 4 -->
+                    <li><a id="longitude-tab" href="#survey-modal" data-toggle="tab"> Select Longitude </a></li>
+                    <!-- Question 5 -->
+                    <li><a id="text-tab" href="#survey-modal" data-toggle="tab"> Select Text </a></li>
+
+                    <li><a id="category-tab" href="#survey-modal" data-toggle="tab"> Select Category </a></li>
+
+                    <!-- insert data with progress bar -->
+                    <li><a id="insert-tab" href="#insert-modal" data-toggle="tab">
+                            Insert data </a></li>
+
+                    <!-- trip tab -->
+                    <li><a id="preprocessing-tab" href="#preprocessing-modal" data-toggle="tab">
+                            Preprocessing </a></li>
+
+
+
+                </ul>
+
+                <!-- Modal content -->
+                <div class="modal-body">
+
+                    <div class="tab-content">
+
+                        <!-- database name panel -->
+                        <div class="tab-pane active" id="dbname-modal">
+                            <div class="form-group" id="select-database">
+                                <label for="dbname-input">Please give your data a name (Use only alphabet letters and numbers ) : </label>
+                                <input class="form-control input-lg" id="dbname-input" type="text">
+                            </div>
+                            <button id="dbname-button" type="button" class="btn btn-warning" onclick="TrajModel.createDB()"> Next </button>
+                        </div>
+
+                        <!-- upload file panel -->
+                        <div class="tab-pane" id="upload-modal">
+                            <div id="select-file">
+                                <p><span class="glyphicon glyphicon-download-alt"></span></p>
+                                <p>Drag and Drop File Here</p>
+                                <label class="btn btn-primary btn-file"> Or Select File Here <input type="file" id="file" style="display: none;" multiple size="50" onchange="TrajModel.readFile(this)" onclick="TrajModel.initialize()"></label>
+                                <p>Uploading currently support: .csv and .geojson files</p>
+                            </div>
+
+                            <div id="complete-select-file">
+                                <p>
+                                    <font color="green" size="5px"><b> Reading file successful </b></font>
+                                </p>
+                                <h3> Now we have some required attributes we need you to specify </h3>
+                                <p> File name: <label id="file-name" /></p>
+                                <p> File size: <label id="file-size" /></p>
+                                <p> Last Modified: <label id="file-modify" /></p>
+                                <p><b> Please click next to continue </b></p>
+                            </div>
+                        </div>
+
+                        <!-- survey panel -->
+                        <div class="tab-pane" id="survey-modal">
+                            <div class="row">
+                                <div id="user-model" class="col-sm-3">
+                                    <div id="user-model-header"> Variables </div>
+                                    <div id="user-model-body" class="pre-scrollable"></div>
+                                </div>
+                                <div id="survey-model" class="col-sm-9">
+                                    <div id="survey-model-header"> Survey #1 </div>
+
+                                    <div id="survey-model-body">
+                                        <div id="survey-model-question"></div>
+                                        <div id="survey-model-hint"></div>
+                                        <!-- add for default attribute -->
+                                        <button id="default-button" type="button" class="btn btn-warning" onclick="TrajModel.setToDefault()"> Set To Default </button>
+                                        <br/><br/><br/>
+                                        <center>
+                                            <div id="survey-model-select"></div>
+                                        </center>
+                                        <!-- add some div to here -->
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- insert panel -->
+                        <div class="tab-pane" id="insert-modal">
+                            <h4 id='forGeometry'> Please be patient, we are uploading your data </h4><br/>
+                            <div id="progressbar-bg">
+                                <div id="progressbar"></div>
+                            </div>
+
+                            <center>
+                                <div id="loaderRN" style="display:none;"></div>
+                            </center>
+                            </br>
+                            <center>
+                                <button id="makepoint" type="button" class="btn btn-warning" onclick="TrajModel.InitMakePoint()"> Geo Indexing </button>
+                            </center>
+                        </div>
+
+                        <!-- trip panel -->
+                        <div class="tab-pane" id="preprocessing-modal">
+                            <div id="preprocess-header">
+                                <h4> Complete </h4>
+                            </div>
+                            <div id="preprocess-hint">
+                                <h5> Uploading data sucessfully </h5>
+                            </div>
+                            <center>
+                                <div id="loaderRN2" style="display:none;"></div>
+                            </center>
+
+                            <button id="trip-finish" type="button" class="btn btn-warning" onclick="UI.finishMakeTrip()"> Finish </button>
+
+                            </center>
+                        </div>
+
+
+
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+
+                    <button id="backModal" type="button" class="btn btn-warning" onclick="UI.back()"> Back </button>
+
+                    <button id="nextModal" type="button" class="btn btn-warning" onclick="UI.next()"> Next </button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End of upload modal -->
+
+    <!-- Basic info modal -->
+    <div class="modal fade" id="userguide-modal" tabindex="-1" role="dialog" arialebelledby="userguide-moal-label" aria-hidden="true">
+        <div class='modal-dialog modal-lg'>
+            <div class='modal-content'>
+                <div class='modal-header'>
+                    <button type='button' class='close' data-dismiss='modal'>&times;</button>
+                    <h4 class='modal-title'>About NeighborVis</h4>
+                </div>
+                <div class='modal-body'>
+                    <div class='col-xs-9'>
+                        <div class='tab-content'>
+                            <div class='tab-pane active' id='intro'>
+                                <h5>Welcome to NeighborVis Visualization System local version 1.0</h5>
+                                <p></p>
+                            </div>
+                            <div class='tab-pane' id='step1'>
+                                <h5></h5>
+                                <p>NeighborVis is a visual analytics system of geospatial-semantic event data in localized neighborhoods within a larger city, town, suburb or rural area. The geospatial-semantic event data (we name it GSE data in this document), consists of geospatial (longitude/latitude or locational address), time, and semantic dimensions, which forms a large part of the important information people deal with for business, personal and administrative use. Here are some GSE data examples:<br /> (1) Social media data of geo-tagged twitter, facebook, Instagram posts;<br /> (2) Real estate data with house price, buyer information, loan and other related documents;<br /> (3) Police data of crime reports with crime locations, involved personnel, and case details;<br /> (4) Public health data of epidemic disease cases with locations and descriptions;<br /> NeighborVis is developed to allow users to study these GSE datasets in a community neighborhood.</p>
+                            </div>
+                            <div class='tab-pane' id='step2'>
+                                <h5>NeighborVis project lead by Ye Zhao (yzhao6@kent.edu)<br /><br />NeighborVis software developed by Chao Ma (cma1@kent.edu)</h5>
+                                <p></p>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class='col-xs-3'>
+                        <ul class='nav nav-tabs tabs-right'>
+                            <li class='active'><a href='#intro' data-toggle='tab'>Welcome To System</a></li>
+                            <li><a href='#step1' data-toggle='tab'>About NeighborVis</a></li>
+                            <li><a href='#step2' data-toggle='tab'>Contact</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End of basic info modal -->
+
+    <!-- Query Modal -->
+    <div class="modal fade" id="queryModal" tabindex="-1" role="dialog" aria-labelledby="queryModalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type='button' class='close' data-dismiss='modal'>&times;</button>
+                    <h4 class="modal-title" id="queryModalTitle">Perform Query</h4>
+                    </button>
+                </div>
+                
+                <div class="modal-body">
+                    <p>Please specific your query</p>
+                    <br>
+                    <!-- <h5>Minimum census tract population</h5>
+                    <div class="slidecontainer">
+                        <input type="range" min="0" max="1000" value="50" class="slider" id="queryPopSlider">
+                        <p id="queryPopShowValue">Value = 50</p>
+                        <p>Note: If 0 is selected, any census tract with 0 population will be treated as having 1 people.</p>
+                    </div>
+                    <br> -->
+                    <h5>Local date range</h5>
+                    <form id="queryDateForm">
+                        <span><strong>From</strong></span>
+                        <input id="queryDateFrom" class="wordColor" type="date">
+                        <span><strong>To</strong></span>
+                        <input id="queryDateTo" class="wordColor" type="date">
+                    </form>
+                    <br>
+                    <h5>Keywords, separate with ','</h5>
+                    <form id="queryKeywordForm">
+                        <input type="radio" id="queryKeywordModeOR" name="queryKeywordMode" value="fulltext" checked> Full-text<br>
+                        <input type="radio" id="queryKeywordModeAND" name="queryKeywordMode" value="phrase"> Phrase<br>
+                        <input type="radio" id="queryKeywordModeAND" name="queryKeywordMode" value="exact"> Exact<br>
+                        <input id="queryKeywords" type="text" class="form-control input-sm" placeholder="Keywords">
+                    </form>
+                    <br>
+                    <!-- <h5>Category:</h5>
+                    <form id="queryCategoryForm">
+                        <p>Category filter is work in progress</p>
+                        <select id="queryCategorySelect"></select>
+                    </form>
+                    <br> -->
+                    <h5>Location type:</h5>
+                    <form id="queryLocationForm">
+                        <select id="queryLocTypeSelect">
+                            <option value="" selected disabled>--Please Select--</option>
+                            <option value="states">Select states</option>
+                            <option value="draw">Draw area</option>
+                        </select>
+                    </form>
+                    <div id="queryStateSelectPanel">
+                        <br>
+                        <p>Selection mode:</p>
+                        <input type="radio" id="queryStateModeInclude" name="queryStateMode" value="include" checked> Include<br>
+                        <input type="radio" id="queryStateModeExclude" name="queryStateMode" value="exclude"> Exclude<br>
+                        <br>
+                        <div class="btn-group-query" id="inputBtnGroup">
+                            <input id="queryStateInput" type="text" class="form-control input-sm" placeholder="Search for lower 49 states...">
+                            <button class="btn btn-sm" type="button" id="queryShowAllState" title="Show all"><span class="glyphicon glyphicon-chevron-down black"></span></button>
+                            <button class="btn btn-sm" type="button" id="queryStateChange" title="Add/Remove State">Add/Remove</button>
+                            <!-- <button class="btn btn-sm" type="button" id="queryStateRemove" title="Remove State"><span class="glyphicon glyphicon-minus black"></span></button> -->
+                            <button class="btn btn-sm" type="button" id="queryStateReset" title="Reset">Reset-all</button>
+                        </div>
+                        <br>
+                        <p id="queryShowStateSelect">States selections:</p>
+                    </div>
+                    <div id="queryDrawAreaPanel">
+                        <br>
+                        <p>Please use the drawing tool&nbsp;&nbsp;
+                            <img id="drawingToolTip" src='./resources/draw_control_tip.png' height='40'/>
+                            &nbsp;&nbsp;on the left side of the map to draw an area that you want to query.
+                        </p>
+                        <button id="queryGoDraw" type="button" class="btn btn-secondary" data-dismiss="modal" title="Draw area on map">Go drawing</button>
+                        <!-- <button id="queryClearDraw" type="button" class="btn btn-secondary" title="Clear drawn area">Clear drawing</button> -->
+                        <br>
+                        <br>
+                        <p id="queryDrawDoneTip">No area drawn.</p>
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+                    <button id="cancelQuery" type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button id="performQuery" type="button" class="btn btn-primary">Perform Query</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Endof query modal -->
+
+    <!-- Static panels -->
+    <div class='content'>
+        
+        <!-- right side panel -->
+        <div id='rightside'>
+            <!-- right side panel title -->
+            <ul class='nav nav-tabs nav-analysis'>
+                <li class='active'>
+                    <a data-toggle='tab' href='#areaAnalysis'>
+
+                        <div class="row">
+                            <div class="col-xs-2">
+                            </div>
+                            <div class="col-xs-8">
+                                <strong>Analysis</strong>
+                            </div>
+                            <div class="col-xs-1">
+                                <button id='analysisButton' class='btn btn-sm btn-primary' title='update' data-toggle='collapse' data-target='#anainfoPanel' aria-hidden='true'> <span class='glyphicon glyphicon-question-sign customGlyphicon'></span></button>
+                            </div>
+                        </div>
+
+                    </a>
+                </li>
+            </ul>
+            
+            <div class='container-fluid'>
+                <!-- right side panel container -->
+                <div class='tab-content'>
+
+                    <!-- Area analysis / dynamic part of right panel -->
+                    <div id='areaAnalysis' class='tab-pane fade in active'>
+
+                        <!-- right panel instruction -->
+                        <!-- <div id='anainfoPanel' class='panel panel-collapse collapse'>
+                            <div class='panel-body'>
+                                <center><strong>Query Analysis View is the panel on the right side (initially hide) that let user detailed checking and analyzing data information. User by selecting the data name that on query management panel to active Query Analysis View. There are four sections in Query Analysis View, (1) All records of the data. (2) Time bar chart. (3) Keyword cloud. (4) Category bar chart.</strong></center>
+
+                            </div>
+                        </div> -->
+                        
+                        <!-- event records panel -->
+                        <!-- <div id='tweetPanel' class="panelList panel panel-default">
+                            <div class="panel-heading"><span> Tweets Samples </span></div>
+                            <div class='panel-body'>
+                                <table id='tweetMessageTable' class='table table-striped table-condensed table-hover'>
+                                    <thead>
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>Content</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+
+                            </div>
+
+                        </div> -->
+
+                        <!-- query params panel -->
+                        <div id='panelQueryParams' class="panelList panel panel-default">
+                            <!-- query params panel heading -->
+                            <div class="panel-heading">
+
+                                <div class="row">
+                                    <div class="col-xs-5">
+                                        <h4 class="panel-title">
+                                            <a class='noWrap' data-toggle="collapse" href="#collapseQueryParams"> <span class="glyphicon glyphicon-chevron-right"></span> &nbsp;&nbsp;Query Params</a>
+                                        </h4>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <!-- query params panel body -->
+                            <div id="collapseQueryParams" class="panel-collapse collapse">
+                                <div class="panel-body">
+                                  
+                                      <p class="queryParamsDisplay">
+                                          <span class="rightBlock queryParamsItem">Date filter:&nbsp;</span>
+                                          <span id='queryParamsDate' class='label queryParamsItem'></span>
+                                      </p>
+
+                                      <p class="queryParamsDisplay">
+                                          <span class="rightBlock queryParamsItem">Keywords Filter:&nbsp;</span>
+                                          <span id='queryParamsKeywords' class='label queryParamsItem'></span>
+                                      </p>
+
+                                      <p class="queryParamsDisplay">
+                                          <span class="rightBlock queryParamsItem">Geo Filter:&nbsp;</span>
+                                          <span id='queryParamsGeo' class='label queryParamsItem'>
+                                      </p>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <p class='panelMarginP'></p>
+
+                        <!-- tweets sample panel -->
+                        <div id='panelTweetsSample' class="panelList panel panel-default">
+                            <!-- tweets sample panel heading -->
+                            <div class="panel-heading">
+                                <div class="row">
+                                    <div class="col-xs-5">
+                                        <h4 class="panel-title">
+                                            <a class='noWrap' data-toggle="collapse" href="#collapseTweetsSample"> <span class="glyphicon glyphicon-chevron-right"></span> &nbsp;&nbsp;Tweets Sample</a>
+                                        </h4>
+                                    </div>
+                                    <!-- <div class="col-xs-4">
+                                        <span id='getTime' class='badge glyphicon glyphicon-remove'></span>
+                                    </div> -->
+                                </div>
+                            </div>
+
+                            <!-- tweets sample panel body -->
+                            <div id="collapseTweetsSample" class="panel-collapse collapse">
+                                <div class="panel-body">
+                                    <table id='tableTweetsSample' class='table table-striped table-condensed table-hover'>
+                                        <thead>
+                                            <tr>
+                                                <th>Date</th>
+                                                <th>Content</th>
+                                            </tr>
+                                        </thead>
+                                        
+                                        <tbody></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <p class='panelMarginP'></p>
+                        
+                        <!-- time panel -->
+                        <div id='panelTime' class="panelList panel panel-default">
+                            <!-- time panel heading -->
+                            <div class="panel-heading">
+
+                                <div class="row">
+                                    <div class="col-xs-5">
+                                        <h4 class="panel-title">
+                                            <a data-toggle="collapse" href="#collapse0"> <span class="glyphicon glyphicon-chevron-right"></span> &nbsp;&nbsp;Time</a>
+                                        </h4>
+                                    </div>
+                                    <div class="col-xs-4">
+                                        <span id='getTime' class='badge glyphicon glyphicon-remove'></span>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <!-- time panel body -->
+                            <div id="collapse0" class="panel-collapse collapse">
+                                <div class="panel-body">
+                                    
+                                    <ul class='nav nav-tabs'>
+                                        <li class='active'><a data-toggle='tab' href='#yearAnalysis'>Year</a></li>
+                                        <li><a data-toggle='tab' href='#monthAnalysis'>Month</a></li>
+                                        <li><a data-toggle='tab' href='#weekAnalysis'>Week</a></li>
+                                        <li><a data-toggle='tab' href='#dayAnalysis'>Day</a></li>
+                                        <li><a data-toggle='tab' href='#weekdayAnalysis'>Weekday</a></li>
+                                        <li><a data-toggle='tab' href='#hourAnalysis'>Time-of-day</a></li>
+                                    </ul>
+
+                                    <div class='container-fluid'>
+                                        <div class='tab-content'>
+                                            <!-- container for time charts -->
+                                            <div id='yearAnalysis' class='tab-pane fade in active'>
+                                                <div id="chartYear"></div>
+                                            </div>
+                                            <div id='monthAnalysis' class='tab-pane fade'>
+                                                <div id="chartMonth"></div>
+                                            </div>
+                                            <div id='dayAnalysis' class='tab-pane fade'>
+                                              <div id="chartDay"></div>
+                                            </div>
+                                            <div id='weekAnalysis' class='tab-pane fade'>
+                                                <div id="chartWeek"></div>
+                                            </div>
+                                            <div id='weekdayAnalysis' class='tab-pane fade'>
+                                              <div id="chartWeekday"></div>
+                                            </div>
+                                            <div id='hourAnalysis' class='tab-pane fade'>
+                                              <div id="chartHour"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <p class='panelMarginP'></p>
+
+                        <!-- keyword panel -->
+                        <div id='panelKeyword' class="panelList panel panel-default">
+                            <!-- keyword panel heading -->
+                            <div class="panel-heading">
+
+                                <div class="row">
+                                    <div class="col-xs-5">
+                                        <h4 class="panel-title">
+                                            <a data-toggle="collapse" href="#collapse1"> <span class="glyphicon glyphicon-chevron-right"></span> &nbsp;&nbsp;Keywords</a>
+                                        </h4>
+                                    </div>
+                                    <div class="col-xs-4">
+                                        <span id='getKeyword' class='badge glyphicon glyphicon-remove'></span>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div id="collapse1" class="panel-collapse collapse">
+
+                                <!-- keyword panel body -->
+                                <div class="panel-body">
+
+                                    <div class="row">
+                                        <div class="col-xs-2">
+                                            <button id='keywordSubmit' class='btn-sm btn-success' title='Show keywords'> <span class='glyphicon glyphicon-refresh'></span></button>
+                                        </div>
+                                        <div class="col-xs-6">
+                                            <div class="btn-group">
+                                                <input type="text" class="form-control input-sm" name="searchKey" id="searchKey" placeholder="Keywords" value="">
+                                                <span id="keyclear" class="searchClear glyphicon glyphicon-remove-circle"></span>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-xs-2">
+                                            <button id='keyClick' class='btn-sm btn-success' title='key situation'> <span class='glyphicon glyphicon-search'></span></button>
+                                        </div>
+
+                                    </div>
+
+                                    <div class='domain-usernames'>
+                                        <div id="wordcloud-container"></div>
+
+
+                                    </div>
+
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <p class='panelMarginP'></p>
+                        
+                        <!-- category panel -->
+                        <div id='panelCategory' class="panelList panel panel-default">
+                            <!-- categoty panel heading -->
+                            <div class="panel-heading">
+                                <div class="row">
+                                    <div class="col-xs-5">
+                                        <h4 class="panel-title">
+                                            <a data-toggle="collapse" href="#collapse2"><span class="glyphicon glyphicon-chevron-right"></span> &nbsp;&nbsp;Category</a>
+                                        </h4>
+                                    </div>
+                                    <div class="col-xs-4">
+                                        <span id='getSitu' class='badge glyphicon glyphicon-remove'></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- category panel body -->
+                            <div id="collapse2" class="panel-collapse collapse">
+                                <div class="panel-body">
+                                    <div class="row">
+                                        <div class="col-xs-2">
+                                            <button id='swithButton' class='btn-sm btn-success' title='Show chart'> <span class='glyphicon glyphicon-indent-left'></span></button>
+                                        </div>
+                                        <div class="col-xs-6">
+                                            <div class="btn-group">
+                                                <input type="text" class="form-control input-sm" name="searchDec" id="searchDec" placeholder="Category" value="">
+                                                <span id="sitclear" class="searchClear glyphicon glyphicon-remove-circle"></span>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-2">
+                                            <button id='situClick' class='btn-sm btn-success' title='Show situation'> <span class='glyphicon glyphicon-search'></span></button>
+                                        </div>
+                                    </div>
+
+
+                                    <div id="chartContainer"></div>
+
+                                    <div id='area-keywords'>
+                                        <table id='area-keywords-table' class='table table-hover table-condensed'>
+                                            <thead>
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th>Description</th>
+                                                    <th>Frequency</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody></tbody>
+                                        </table>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Area line and bar chart -->
+                        <!-- <svg id='area-lineChart'></svg> -->
+                    </div>
+                    <!-- End of area analysis -->
+
+                </div>
+            </div>
+            <!-- End of container fluid -->
+        </div>
+        <!-- End of right-hand window -->
+
+        <!-- leaflet map (left-hand side)-->
+        <div id='map'></div>
+        <!-- Togglebar for right-hand window -->
+
+        <!-- Loading animation -->
+        <div class="loader">
+            <img id="loadingImage" src='./resources/loadingImage/loading5.gif' width='35' height='35' style="display:none" />
+        </div>
+        <!-- End of Loading animation -->
+
+        <button id='rightsideToggle' type='button' class='btn text-left' data-toggle='tooltip' data-placement='left' title='Show data summary'><span id='rightside-glyph' class='glyphicon glyphicon-chevron-left' aria-hidden='true'></span></button>
+
+        <!-- <button id='searchButton' class='btn' data-toggle='collapse' data-target='#searchPanel' title='Show all tweets'> <span class='glyphicon glyphicon-folder-open' aria-hidden='true'></span></button>
+
+        <div id='searchPanel' class='panel panel-collapse collapse'>
+            <div class='panel-heading'>
+                <form class="form-inline" id="fileform">
+                    <span><strong>Upload Shape.zip</strong></span>
+
+                    <input type="file" id="fileInputShape" onchange="MAP.onChangeShape(event)" style="display: none;">
+
+
+                    <input type="button" class="btn-sm btn-primary btn-size4" value="File" onclick="document.getElementById('fileInputShape').click();" />
+                </form>
+            </div>
+            <div class='panel-body'>
+
+                <div id='area-shape'>
+                    <table id='area-shape-table' class='table table-hover table-condensed'>
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Info</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div> -->
+
+        <button id='toolButton' class='btn' data-toggle='collapse' data-target='#toolPanel' title='Center on coordinate'> <span class='glyphicon glyphicon-globe' aria-hidden='true'></span></button>
+
+        <div id='toolPanel' class='panel panel-collapse collapse'>
+            <div class='panel-body'>
+
+                <form class="form-inline">
+
+                    <span><strong>Latitude:</strong></span>
+                    <input id="lat" class="wordColor inputSize" type="text" value="40.646722">
+                    <span><strong>Longitude:</strong></span>
+                    <input id="long" class="wordColor inputSize" type="text" value="-73.933333">
+
+                    <button id="pinView" class='btn-xs buttonSm' type="button"><span class="glyphicon glyphicon-refresh refreshSize"></span></button>
+
+                </form>
+            </div>
+        </div>
+
+        <!-- left side panel -->
+        <div id='left-side' class="leftsidePanel">
+
+            <div id='queryLeft' class="panelListLeft panel panel-default leftPanelSize">
+              <!-- query panel -->
+                <div class="panel-heading"><span> Query Selection </span>
+
+                    <button id='queryGuideButton' class='btn btn-xs helpButton' title='update' data-toggle='collapse' data-target='#queryGuide' aria-hidden='true'> <span class='glyphicon glyphicon-question-sign customGlyphicon'></span></button>
+
+                </div>
+
+                <div class='panel-body'>
+
+                <br>
+
+                <div id='queryGuide' class='panel panel-collapse collapse'>
+                  <div class='panel-body'>
+                      <center><strong>Select dataset first, then click "Launch new query" to formulate the query.</strong></center>
+
+                  </div>
+                </div>
+
+                <!-- Add a query button here -->
+                <div class="div-auto-margin">
+                  <button type="button" id="launchNewQuery" class="btn btn-primary" data-toggle="modal" data-target="#queryModal">
+                      Launch new query
+                  </button>
+                </div>
+
+                <br>
+
+                <form class="navbar-form navbar-left">
+                    <div class="infoBox">
+
+                        <div class="infohead"><span>Selected Data</span></div>
+                        <div id="selectedData"></div>
+                    </div>
+                </form>
+
+                    <!-- <form class="navbar-form navbar-left">
+                        <div class="form-group">
+                            <span><strong>From</strong></span>
+                            <input id="datefrom" class="wordColor" type="date" value="2010-01-01">
+                        </div>
+                    </form>
+
+                    <form class="navbar-form navbar-left">
+                        <div class="form-group">
+                            <span><strong>To &nbsp; &nbsp;</strong></span>
+                            <input id="dateto" class="wordColor" type="date" value="2018-01-01">
+                        </div>
+                    </form> -->
+
+
+                    <!-- <form class="form-inline navbar-form navbar-left">
+                        <span><strong>Keywords &nbsp;</strong></span>
+
+                        <input type="text" class="form-control input-sm dropInput" name="searchKeysReg" id="searchKeysReg" placeholder="Input" value="" list="keyList">
+                        <datalist id="keyList">
+                            <option value="drug">drug</option>
+                            <option value="children">children</option>
+                            <option value="theft">theft</option>
+                            <option value="suspicious">suspicious</option>
+                            <option value="property">property</option>
+                            <option value="traffic">traffic</option>
+                            <option value="car">car</option>
+                            <option value="violation">violation</option>
+                            <option value="driver">driver</option>
+                            <option value="vehicle">vehicle</option>
+                            <option value="dispute">dispute</option>
+                            <option value="home">home</option>
+                            <option value="apartment">apartment</option>
+                            <option value="intoxicated">intoxicated</option>
+                            <option value="house">house</option>
+                            <option value="welfare">welfare</option>
+                            <option value="speed">speed</option>
+                            <option value="parked">parked</option>
+                        </datalist>
+                    </form> -->
+
+
+                    <!-- <form class="form-inline navbar-form navbar-left">
+                        <span><strong>Category &nbsp;</strong></span>
+
+                        <input type="text" class="form-control input-sm " name="searchSituReg" id="searchSituReg" placeholder="Input" value="" list="situList">
+
+                        <datalist id="situList">
+                        </datalist>
+
+                    </form> -->
+                </div>
+            </div>
+
+            <div id='managerLeft' class="panelListLeft panel panel-default leftManagerSize">
+                <div class="panel-heading"><span> Query Manager </span>
+
+                    <button id='managerButton' class='btn btn-xs helpButton' title='update' data-toggle='collapse' data-target='#maninfoPanel' aria-hidden='true'> <span class='glyphicon glyphicon-question-sign customGlyphicon'></span></button>
+
+                </div>
+
+                <div class='panel-body'>
+
+                    <div id='maninfoPanel' class='panel panel-collapse collapse'>
+                        <div class='panel-body'>
+                            <center><strong>Query operations are recorded in Query Management Panel. User can check and switch among queries by clicking. User also can remove queries by clicking trash bin button. By clicking each query shows sub list that contains all data that associate with this query. User can switch among each data. Highlighted query or data shows the current active one. All data information and analysis is updated to Map View also in Query Analysis View.</strong></center>
+
+                        </div>
+                    </div>
+
+                    <table id='areaTable' class='table table-condensed table-hover class_selector'>
+                        <thead>
+                            <tr>
+                                <th>Data Name</th>
+                                <th># Tweets</th>
+                                <th># Tracts</th>
+                                <th><button id="removeAll" class='btn-xs buttonSm' type="button"><span class="glyphicon glyphicon-trash red"></span></button></th>
+                            </tr>
+                        </thead>
+                        <tbody> </tbody>
+                    </table>
+
+                </div>
+
+
+            </div>
+
+            <div id='drawControlLeft' class="panelListLeft panel panel-default leftPanelSize">
+              <!-- query panel -->
+                <div class="panel-heading"><span> Drawing Control </span>
+
+                    <button id='drawControlGuideButton' class='btn btn-xs helpButton' title='update' data-toggle='collapse' data-target='#drawControlGuide' aria-hidden='true'> <span class='glyphicon glyphicon-question-sign customGlyphicon'></span></button>
+
+                </div>
+
+                <div class='panel-body controlPanelNoScroll'>
+
+                  <div id='drawControlGuide' class='panel panel-collapse collapse'>
+                    <div class='panel-body'>
+                        <center><strong>Use this panel to control the drawing on the map.</strong></center>
+                    </div>
+                  </div>
+
+                  <div id="mapTypeControl">
+                    <h5 class="controlPanelHeading"> Map Options </h5>
+                    
+                    <span class="controlPanelSubHeading"> Normalize by population: </span> 
+                    <br>
+                    <input type="checkbox" id="mapControlNorm" value="normByPop"> Show normalized
+                    
+                    <br class="brMargin">
+                    <!-- <br> -->
+
+                    <span class="controlPanelSubHeading"> Display type: </span>
+                    <br>
+                    <input class="controlPanelElement" type="radio" id="displayTypeChoropleth" name="displayTypeControl" value="choropleth" checked> Choropleth Map <br>
+                    <input class="controlPanelElement" type="radio" id="displayTypeHeat" name="displayTypeControl" value="heatmap"> Heatmap <br>
+                    <input class="controlPanelElement" type="radio" id="displayTypeNone" name="displayTypeControl" value="none"> None <br class="brMargin">
+                  </div>
+
+
+                  <div id="choroplethMapControl">
+                    <h5 class="controlPanelHeading"> Choropleth Map Control </h5>
+                    <!-- <br class="brMargin"> -->
+
+                    <div class="mapControlAlign">
+                      <p>Opacity</p> <input type="number" class="mapControlNumber" id="choroplethMapOpacity" value=0.5 step=0.1 min=0.0 max=1.0> 
+                    </div>
+
+                    <!-- <input type="checkbox" id="choroplethMapShowEmpty" value="show" checked> Show blocks with zero count -->
+                    
+                    <!-- <br class="brMargin"> -->
+                    
+                    <span class="controlPanelSubHeading"> Binning Method: </span>
+                    <select class="controlPanelElement mapControlSelect" id='choroplethMapBinning'>
+                      <option value="eqInterval">Equal Interval</option>
+                      <option value="quantile">Quantile</option>
+                      <option value="natBreaks">Natural Breaks</option>
+                      <option value="std">Standard Deviation</option>
+                    </select>
+                    
+                    <br class="brMargin">
+                    
+                    <div class="mapControlAlign">
+                      <span class="controlPanelSubHeading"> Number of Bins: </span>
+                      <select class="controlPanelElement mapControlSelect" id="choroplethMapNumBin">
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                        <option value="9">9</option>
+                        <option value="10">10</option>
+                      </select> 
+                    </div>  
+                  </div>
+
+
+                  <div id="heatmapControl">
+                    <h5 class="controlPanelHeading"> Heatmap Control </h5>
+                    
+                    <div class="mapControlAlign">
+                      <p>Radius</p> <input type="number" class="mapControlNumber" id="heatmapRadius" value=100 step=1 min=1 max=500> 
+                    </div>
+                    <div class="mapControlAlign">
+                      <p>Blur</p><input type="number" class="mapControlNumber" id="heatmapBlur" value=15 step=1 min=0 max=50> </div>
+                    
+                    <div class="mapControlAlign">
+                      <p>MaxZoom</p><input type="number" class="mapControlNumber" id="heatmapZoom" value=20 step=0.5 min=0 max=20> </div>
+                    
+                    <div class="mapControlAlign">
+                      <p>MinOpacity</p><input type="number" class="mapControlNumber" id="heatmapOpacity" value=0.7 step=0.1 min=0.0 max=1.0> </div>
+                    
+                  </div>
+
+                </div>
+            </div>
+
+            <!-- <div id='statesSelectLeft' class="panelListLeft panel panel-default leftStatesSelectSize">
+                <div class="panel-heading"><span> States of Interests </span>
+
+                    <button id='managerButton' class='btn btn-xs helpButton' title='update' data-toggle='collapse' data-target='#statesSelectInfo' aria-hidden='true'> <span class='glyphicon glyphicon-question-sign customGlyphicon'></span></button>
+
+                </div>
+
+                <div class='panel-body'>
+
+                    <div id='statesSelectInfo' class='panel panel-collapse collapse'>
+                        <div class='panel-body'>
+                            <center><strong>Search states, add or remove from states of interests</strong></center>
+
+                        </div>
+                    </div>
+
+                    
+                    <div class="input-group">
+                        <input type="text" class="form-control input-sm" aria-label="..." placeholder="Search state">
+                        <div class="input-group-btn">
+                            <button class="btn btn-sm" type="button"><span class="glyphicon glyphicon-plus black"></span></button>
+                            <button class="btn btn-sm" type="button"><span class="glyphicon glyphicon-minus black"></span></button>
+                        </div>
+                    </div>
+
+                    <div class="scrollTableWrap">
+                        <table id='statesExcludeTable' class='table table-condensed inlineTable' width='45%'>
+                            <thead>
+                                <tr>
+                                    <th>States of interests</th>
+                                    <th><button id="removeAllStates" class='btn-xs buttonSm' type="button" title="Remove all states"><span class="glyphicon glyphicon-remove customGlyphicon black"></span></button></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                    <tr><td>Alabama</td></tr>
+                                    <tr><td>Arizona</td></tr>
+                                    <tr><td>Arkansas</td></tr>
+                                    <tr><td>California</td></tr>
+                                    <tr><td>Colorado</td></tr>
+                                    <tr><td>Connecticut</td></tr>
+                                    <tr><td>Delaware</td></tr>
+                                    <tr><td>Florida</td></tr>
+                                    <tr><td>Georgia</td></tr>
+                                    <tr><td>Idaho</td></tr>
+                                    <tr><td>Illinois</td></tr>
+                                    <tr><td>Indiana</td></tr>
+                                    <tr><td>Iowa</td></tr>
+                                    <tr><td>Kansas</td></tr>
+                                    <tr><td>Kentucky</td></tr>
+                                    <tr><td>Louisiana</td></tr>
+                                    <tr><td>Maine</td></tr>
+                                    <tr><td>Maryland</td></tr>
+                                    <tr><td>Massachusetts</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+
+
+            </div> -->
+
+        </div>
+        <!-- End of left side panel -->
+
+
+        <!-- End of Query Manager Panel -->
+
+    </div>
+    <!-- End of Static panels -->
+
+
+    <!--[ footer ] -->
+    <!-- <script src='bower_components/require/require.js'></script> -->
+
+    <!-- JQuery -->
+    <script src="bower_components/jquery/jquery.min.js"></script>
+    <link rel="stylesheet" href="bower_components/jquery-ui/jquery-ui.min.css">
+    <script src="bower_components/jquery-ui/jquery-ui.min.js"></script>
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css" type="text/css">
+    <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <!-- Leaflet -->
+    <link rel="stylesheet" href="bower_components/leaflet/dist/leaflet.css">
+    <script src="bower_components/leaflet/dist/leaflet.js"></script>
+    <!-- Leaflet draw -->
+    <link rel="stylesheet" href="bower_components/leaflet-draw/dist/leaflet.draw.css">
+    <link rel="stylesheet" href="css/app.css">
+    <script src="bower_components/leaflet-draw/dist/leaflet.draw.js"></script>
+    <!-- Leaflet cluster -->
+    <!-- Leaflet heatmap -->
+    <script src="bower_components/leaflet.heat/dist/leaflet-heat.js"></script>
+    <!-- D3 -->
+    <script src="bower_components/d3/d3.min.js"></script>
+    <script src="bower_components/d3-cloud/build/d3.layout.cloud.js"></script>
+
+    <!-- <script src="bower_components/shapeFile/shp.min.js"></script> -->
+    <!-- <script src="bower_components/shapeFile/shp.js"></script> -->
+    <!-- leaflet.shpfile -->
+    <script src="bower_components/shapeFile/shp.min.js"></script>
+    <script src="bower_components/shapeFile/leaflet.shpfile.js"></script>
+    <!-- leaflet virtual grid master -->
+    <script src="bower_components/leaflet-virtual-grid-master/src/virtual-grid.js"></script>
+    <!-- array observe -->
+    <script src="bower_components/array.observe/array-observe.min.js"></script>
+    
+    <script src="bower_components/heatmap.js/build/heatmap.js"></script>
+    
+    <script src="bower_components/potly/plotly-latest.min.js"></script>
+    
+    <script src="bower_components/randomColor/randomColor.js"></script>
+    
+    <script src="bower_components/multiple-select/multiple-select.js"></script>
+
+    <script src="bower_components/tagsinput/dist/bootstrap-tagsinput.js"></script>
+    
+    <link rel="stylesheet" href="bower_components/tagsinput/dist/bootstrap-tagsinput.css">
+    <link rel="stylesheet" href="css/drugvis.css">
+    <link rel="stylesheet" href="bower_components/multiple-select/multiple-select.css">
+
+    <script src='bower_components/catiline/catiline.js'></script>
+    <script src='bower_components/colorbrewer/colorbrewer.js'></script>
+    <script src='bower_components/chroma/chroma.min.js'></script>
+    
+    
+    <!-- <script src="https://unpkg.com/shpjs@latest/dist/shp.js"></scrip> -->
+
+    <!-- <script src='bower_components/catiline/catiline.js'></script> -->
+
+    <!-- <script data-main="js/main.js" src="js/require.js"></script> -->
+
+    <script src="js/area.js"></script>
+    <script src="js/map.js"></script>
+    <script src="js/query.js"></script>
+    <script src="js/loginCheck.js"></script>
+    <script src="js/jquery.js"></script>
+    <script src="js/tool.js"></script>
+
+    <script src="js/upload/UIManager.js"></script>
+    <script src="js/upload/TrajModel.js"></script>
+    <script src="js/upload/File.js"></script>
+    <script src="js/upload/DataManager.js"></script>
+    <script src="js/upload/DataModel.js"></script>
+    <script src="js/upload/Parser.js"></script>
+    <script src="js/upload/papaparse.min.js"></script>
+
+    <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600,200italic,600italic&subset=latin,vietnamese' rel='stylesheet' type='text/css'>
+
+    <script src="bower_components/lunr.js/lunr.min.js"></script>
+    <script src="https://unpkg.com/compromise@latest/builds/compromise.min.js"></script>
+    <!-- <script src="bower_components/compromise/compromise.min.js"></script> -->
+    <!-- <script src="bower_components/compromise/compromise.js"></script> -->
+    <!-- // <script src="http://elasticlunr.com/elasticlunr.min.js"></script> -->
+
+    <script src="bower_components/seiyria-bootstrap-slider/dist/bootstrap-slider.min.js"></script>
+    <link rel="stylesheet" href="bower_components/seiyria-bootstrap-slider/dist/css/bootstrap-slider.css">
+
+    <script src="bower_components/vis/dist/vis.js"></script>
+    <link href="bower_components/vis/dist/vis.css" rel="stylesheet" type="text/css" />
+
+    
+
+    <script src="bower_components/spectrum/spectrum.js"></script>
+    <link href="bower_components/spectrum/spectrum.css" rel="stylesheet" type="text/css" />
+
+    <script type="text/javascript" src="bower_components/canvasjs-2.0/canvasjs.min.js"></script>
+
+    <script type="text/javascript" src="bower_components/geostats/geostats.min.js"></script>
+
+    <!-- <script src="js/require.js"></script> -->
+    
+
+</body>
+
+</html>

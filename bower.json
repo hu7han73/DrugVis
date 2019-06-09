@@ -1,0 +1,22 @@
+{
+  "name": "DrugVis",
+  "description": "visualize drug abuse risk behavior in tweets data",
+  "version": "2.0.0",
+  "dependencies": {
+    "bootstrap": "^3.3.7",
+    "d3": "3.5.5",
+    "leaflet": "1.0.3",
+    "leaflet-draw": "0.4.9",
+    "leaflet.markercluster": "^1.1.0",
+    "leaflet.heat": "Leaflet.heat#*",
+    "lunr-js": "^1.0.0",
+    "natural": "^1.0.9",
+    "bower": "*",
+    "install": "^1.0.4",
+    "vis": "^4.21.0",
+    "leaflet-polylinedecorator": "^1.5.1",
+    "array.observe": "^0.0.1",
+    "d3-cloud": "^1.2.4",
+    "heatmap.js-amd": "^2.0.5"
+  }
+}

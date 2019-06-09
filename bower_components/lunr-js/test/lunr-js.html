@@ -1,0 +1,53 @@
+<!doctype html>
+<html>
+  <head>
+    <title>lunr-js</title>
+    <script src="../../webcomponentsjs/webcomponents.js"></script>
+    <script src="../../web-component-tester/browser.js"></script>
+    <script src="../../test-fixture/test-fixture-mocha.js"></script>
+    <link rel="import" href="../../polymer/polymer.html">
+
+    <link rel="import" href="../../test-fixture/test-fixture.html">
+    <link rel="import" href="../lunr-js.html">
+  </head>
+  <body>
+    <test-fixture id="lunrJs">
+      <template>
+        <lunr-js></lunr-js>
+      </template>
+    </test-fixture>
+    <script>
+      suite('<lunr-js>', function () {
+        var lunrJs;
+        var lookFor = ""+(Math.floor(Math.random() * 3) + 1)  
+        setup(function () {
+          lunrJs = fixture('lunrJs')
+          lunrJs.data = [{test:1},{test:2},{test:3},{test:"ama"}]
+        });
+        teardown(function () {
+          //...
+        });
+        suite('basic usage', function () {
+          test('can find 1,2 or 3', function(done) {
+            lunrJs._search = lookFor
+            if (lunrJs.output[0].test == lookFor) {
+              done()
+            }
+          })
+          test('can find ama searching for am', function(done) {
+            lunrJs._search = "am"
+            if (lunrJs.output[0].test == "ama") {
+              done()
+            }
+          })
+          test('can not find 4', function(done) {
+            lunrJs._search = 4
+            if (!lunrJs.output[0]) {
+              done()
+            }
+          })
+        });
+      });
+    </script>
+  </body>
+</html>
