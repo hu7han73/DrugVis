@@ -95,7 +95,7 @@ def load_shpfiles():
   all_gdf['GEOID'] = all_gdf['GEO_ID'].apply(clip_geoid)
   print("Shape of the all_gdf: {}".format(all_gdf.shape))
   print("Projection of all_gdf: {}".format(all_gdf.crs))
-  print(all_gdf.loc[all_gdf['GEOID'] == '47053966500'])
+  # print(all_gdf.loc[all_gdf['GEOID'] == '47053966500'])
   return all_gdf, main_crs
 
 def load_tweets(p):
@@ -373,7 +373,7 @@ def worker_prepare_records_positive_tweets(main_crs, pop_gdf, in_q, record_q, m_
     m_q.put('One file processed, time {}'.format(datetime.now()))
 
 def worker_insert_tweets_2017(record_queue, m_q, num_workers):
-  table = connect_to_db('drug_viz_data', 'tweets_2017_test')
+  table = connect_to_db('drug_viz_data', 'tweets_2017_filter')
   none_count = 0
   while True:
     joined_gdf = record_queue.get()
@@ -425,8 +425,8 @@ def process_records_mp():
   out_p.start()
   # put file path into queue
   # change this path
-  path_temp = 'D:/TEMPFILE/tweets/2017_positive_tweets_{}.json'
-  for i in range(6):
+  path_temp = 'D:/TEMPFILE/2017_filter/2017_positive_filtered_tweets_{}.json'
+  for i in range(2):
     p = path_temp.format(i)
     in_q.put(p)
   for i in range(num_workers):
@@ -440,7 +440,7 @@ def process_records_mp():
       break
     print(m)
   # make index
-  table = connect_to_db('drug_viz_data', 'tweets_2017_test')
+  table = connect_to_db('drug_viz_data', 'tweets_2017_filter')
   table.create_index([('textNorm',pymongo.TEXT)])
   table.create_index([('geo',pymongo.GEOSPHERE)])
   table.create_index("utcTime")

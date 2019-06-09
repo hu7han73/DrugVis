@@ -29,7 +29,7 @@ from db_utils import connect_to_db
 #                     level=logging.DEBUG)
 root_logger= logging.getLogger()
 root_logger.setLevel(logging.DEBUG)
-handler = logging.FileHandler('./log/query_log.log', 'w', 'utf-8')
+handler = logging.FileHandler('./log/query_log.log', 'a', 'utf-8')
 formatter = logging.Formatter('%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s')
 handler.setFormatter(formatter) # Pass handler as a parameter, not assign
 root_logger.addHandler(handler)
@@ -70,6 +70,7 @@ def main3_aggregate():
   # if incoming json decoded successfully
   if decode_flag:
     if params['queryMode'] == 'full':
+      logging.info('into full query')
       try:
         # get the geoid list (by states or geo constrains)
         geoid_list = get_geoid_list(params)
@@ -86,9 +87,10 @@ def main3_aggregate():
         resp = wrap_response_aggregate(mapping_data, tweets_data, sample_data, geoid_list, params)
         send_response(resp)
       except Exception:
-        logging.info('exception when query')
+        logging.info('exception when full query')
         send_response(error_resp(traceback.format_exc()))
     elif params['queryMode'] == 'sub':
+      logging.info('into sub query')
       try:
         # get the geolist from incoming query
         geoid_list = params['geoidList']
@@ -98,16 +100,18 @@ def main3_aggregate():
         resp = wrap_response_sub_aggregate(tweets_data, geoid_list)
         send_response(resp)
       except Exception:
-        logging.info('exception when query')
+        logging.info('exception when sub query')
         send_response(error_resp(traceback.format_exc()))
     elif params['queryMode'] == 'sample':
+      logging.info('into sample query')
       try:
         # use geoid from query
         geoid_list = [params['queryGeoID']]
         sample_data = get_tweets_sample(params, geoid_list)
         resp = wrap_sample_response(sample_data, params)
+        send_response(resp)
       except Exception:
-        logging.info('exception when query')
+        logging.info('exception when sample query')
         send_response(error_resp(traceback.format_exc()))
   else:
     logging.info('exception when decode')
@@ -293,6 +297,7 @@ def get_tweets_sample(params, geoid_list):
         i += 1
     # sample_data_dict[geoid_list[0]][coll_name] = samples
     sample_data_dict[coll_name] = samples
+    logging.info(str(samples))
   return sample_data_dict
 
 # wrap the response with needed information for front end

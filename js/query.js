@@ -442,7 +442,7 @@ QUERY.fireQuery = function(queryParams){
     dataType: "json",
     async: true,
     method: "GET",
-    url: "/NeighborVis/cgi-bin/query_cgi.py",
+    url: "/DrugVis/cgi-bin/query_cgi.py",
     data: {data: JSON.stringify(queryParams)},
     // data: queryParams,
     success: function (resp, status, XHR)
@@ -619,7 +619,7 @@ QUERY.handleQueryResults = function(queryParams, resp){
     }
     // save sample results to its corrresponding mapping data
     var resultObj = QUERY.getAggregateQueryDataByID(resp['queryID']);
-    resultObj.sampleData[resp.geoID] = resp.sampleData;
+    resultObj.sampleList[resp.geoID] = resp.sampleData;
     // update sample display panel
     AREA.updateSampleDisplay(resultObj, resp.geoID, QUERY.activeCollName);
   }
